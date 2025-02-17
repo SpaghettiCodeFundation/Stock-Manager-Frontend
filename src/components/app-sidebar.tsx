@@ -1,12 +1,14 @@
 import {
-  Calendar,
+  BadgeDollarSign,
+  Car,
+  ChartBarStacked,
   ChevronDown,
-  ChevronUp,
   Home,
-  Inbox,
-  Search,
-  Settings,
+  ShoppingBasket,
   User2,
+  UserCog,
+  UserRoundCheck,
+  Users,
 } from "lucide-react";
 
 import {
@@ -22,35 +24,34 @@ import {
 } from "@/components/ui/sidebar";
 
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
-
-import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@radix-ui/react-collapsible";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Link } from "react-router-dom";
 
 const inventories = [
   {
-    title: "products",
-    url: "#",
+    title: "home",
+    url: "/dashboard",
     icon: Home,
   },
   {
-    title: "categories",
+    title: "products",
     url: "#",
-    icon: Inbox,
+    icon: ShoppingBasket,
+  },
+  {
+    title: "categories",
+    url: "/dashboard/categories",
+    icon: ChartBarStacked,
   },
   {
     title: "providers",
     url: "#",
-    icon: Calendar,
+    icon: Car,
   },
 ];
 
@@ -58,7 +59,7 @@ const administrations = [
   {
     title: "users",
     url: "#",
-    icon: Home,
+    icon: Users,
   },
 ];
 
@@ -66,12 +67,12 @@ const sales = [
   {
     title: "sales",
     url: "#",
-    icon: Home,
+    icon: BadgeDollarSign,
   },
   {
     title: "clients",
     url: "#",
-    icon: Inbox,
+    icon: UserRoundCheck,
   },
 ];
 
@@ -159,35 +160,21 @@ export function AppSidebar() {
         </Collapsible>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton>
-                  <Avatar>
-                    <AvatarImage src="https://github.com/shadcn.png" />
-                    <AvatarFallback>
-                      <User2 />
-                    </AvatarFallback>
-                  </Avatar>
-                  Username
-                  <ChevronUp className="ml-auto" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                side="top"
-                className="w-[--radix-popper-anchor-width] cursor-pointer ms-4"
-              >
-                <DropdownMenuItem>
-                  <span>My Account</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span>Sign out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <div className="flex items-center cursor-pointer py-2 justify-between">
+          <div className="flex items-center">
+            <Avatar>
+              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarFallback>
+                <User2 />
+              </AvatarFallback>
+            </Avatar>
+            <p className="ml-2">Username</p>
+          </div>
+
+          <Link to="/dashboard/my-account">
+            <UserCog className="ml-auto" />
+          </Link>
+        </div>
       </SidebarFooter>
     </Sidebar>
   );
