@@ -1,5 +1,7 @@
+import {IFormStoreCategory} from "@/components/categories/CraeteCategory";
+import {IFormUpdateCategory} from "@/components/categories/EditCategory";
 import api from "@/helpers/axios";
-import {IApiResponseCategories} from "@/interfaces/categories.interface";
+import {IApiResponseCategories, ICategory} from "@/interfaces/categories.interface";
 
 export interface IQueryCategories {
   limit?: number,
@@ -19,7 +21,22 @@ export const categories = async (query: IQueryCategories  = {}): Promise<IApiRes
   return response?.data as IApiResponseCategories
 };
 
-export const deleteRecordsCategories = async (categories: number[]) => {
+export const storeCategory = async (data: IFormStoreCategory) => {
+
+  return await api.post(`/categories`, data)
+};
+
+
+export const updateCategory = async (data: IFormUpdateCategory, id: string) => {
+
+  const response = await api.put(`/categories/${id}`, data).catch(err => {
+    console.error(err)
+  });
+
+  return response?.data
+};
+
+export const deleteRecordsCategories = async (categories: string[]) => {
 
   console.log(categories)
   const response = await api.delete('/categories/delete-records', {

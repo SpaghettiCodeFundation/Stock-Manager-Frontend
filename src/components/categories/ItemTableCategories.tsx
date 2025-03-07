@@ -7,8 +7,8 @@ import EditCategory from "./EditCategory";
 interface IProps {
   item: ICategory;
   checkDelete: boolean;
-  setRecordsCategories: (id: number) => void;
-  removeRecordsCategories: (id: number) => void;
+  setRecordsCategories: (id: string) => void;
+  removeRecordsCategories: (id: string) => void;
 }
 
 const ItemTableCategories: React.FC<IProps> = ({
@@ -24,8 +24,8 @@ const ItemTableCategories: React.FC<IProps> = ({
   }, [checkDelete]);
 
   useEffect(() => {
-    if (isDeleted) setRecordsCategories(item.id);
-    if (!isDeleted) removeRecordsCategories(item.id);
+    if (isDeleted) setRecordsCategories(item.id as string);
+    if (!isDeleted) removeRecordsCategories(item.id as string);
   }, [isDeleted]);
 
   return (

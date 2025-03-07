@@ -21,16 +21,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-import { ICategory } from "@/interfaces/categories.interface";
-
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Pencil } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { z } from "zod";
+import {storeCategory} from "@/api/categories.api";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {updateCategory} from "@/api/categories.api";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -41,59 +38,50 @@ const formSchema = z.object({
   }),
 });
 
-export type IFormUpdateCategory = z.infer<typeof formSchema>;
+export type IFormStoreCategory = z.infer<typeof formSchema>;
 
-interface IProps {
-  item: ICategory;
-}
-
-const EditCategory: React.FC<IProps> = ({ item }) => {
+const CreateCategory: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
 
-  const form = useForm<IFormUpdateCategory>({
+  const form = useForm<IFormStoreCategory>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: item.name,
-      description: item.description,
+      name: '',
+      description: '',
     },
   });
 
   const queryClient = useQueryClient();
-
-  interface IParams {
-    data: IFormUpdateCategory,
-    id: string
-  }
-
+  
   const {mutate, isPending} = useMutation({
-    mutationFn: async ({data, id}: IParams) => await updateCategory(data, id),
+    mutationFn: async (data: IFormStoreCategory) => await storeCategory(data),
     mutationKey: ["categories"],
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] });
       onClose()
     },
+    onError: (err) => {
+      console.log(err)
+    }
   });
 
-  function onSubmit(values: IFormUpdateCategory) {
-    mutate({
-      id: item.id as string,
-      data: values
-    })
+  function onSubmit(values: IFormStoreCategory) {
+    mutate(values)
   }
 
   return (
     <>
-      <Button variant={"outline"} className="border-none" onClick={onOpen}>
-        <Pencil />
+      <Button className="border-none" onClick={onOpen}>
+        Create new category
       </Button>
 
       <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Edit Category</AlertDialogTitle>
+            <AlertDialogTitle>Create Category</AlertDialogTitle>
           </AlertDialogHeader>
           <div>
             <Form {...form}>
@@ -129,7 +117,7 @@ const EditCategory: React.FC<IProps> = ({ item }) => {
                   )}
                 />
                 <Button type="submit">
-                  { isPending ? "Updating..." : "Edit" }
+                  { isPending ? "Creating..." : "Create" }
                 </Button>
               </form>
             </Form>
@@ -143,4 +131,4 @@ const EditCategory: React.FC<IProps> = ({ item }) => {
   );
 };
 
-export default EditCategory;
+export default CreateCategory;

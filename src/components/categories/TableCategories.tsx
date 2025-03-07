@@ -27,11 +27,12 @@ import ItemTableCategories from "./ItemTableCategories";
 import { ICategory, IMeta } from "@/interfaces/categories.interface";
 import AlertDelete from "../AlertDelete";
 import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
+import CreateCategory from "./CraeteCategory";
 
 const TableCategories: React.FC = () => {
   const [query, setQuery] = useState<IQueryCategories>({});
   const [deleteAll, setDeleteAll] = useState<boolean>(false);
-  const [recordsCategories, setRecordsCategories] = useState<number[]>([]);
+  const [recordsCategories, setRecordsCategories] = useState<string[]>([]);
 
   const { data, isLoading } = useCategoriesQuery(query);
   const { mutate, isPending: isPendingDelete} = useDeleteRecordsCategoriesMutation();
@@ -90,7 +91,7 @@ const TableCategories: React.FC = () => {
   }, [deleteAll]);
 
   return (
-    <div>
+    <>
       <div className="lg:flex lg:justify-between mt-11 mb-6">
         <Input
           placeholder="Search category"
@@ -112,14 +113,14 @@ const TableCategories: React.FC = () => {
               </Button>
             </AlertDialogTrigger>
           </AlertDelete>
-          <Button>Create new category</Button>
+          <CreateCategory/>
         </div>
       </div>
 
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">
+            <TableHead>
               <label htmlFor="delete" className="flex items-center space-x-2">
                 <Checkbox
                   id="delete"
@@ -141,10 +142,10 @@ const TableCategories: React.FC = () => {
                 key={item.id}
                 item={item}
                 checkDelete={deleteAll}
-                setRecordsCategories={(id: number) =>
+                setRecordsCategories={(id: string) =>
                   setRecordsCategories((prev) => [...prev, id])
                 }
-                removeRecordsCategories={(id: number) =>
+                removeRecordsCategories={(id: string) =>
                   setRecordsCategories(
                     recordsCategories.filter((item) => item !== id)
                   )
@@ -153,7 +154,7 @@ const TableCategories: React.FC = () => {
             ))}
         </TableBody>
       </Table>
-
+      
       {!isLoading && (
         <Pagination className="flex justify-end">
           <PaginationContent>
@@ -167,7 +168,7 @@ const TableCategories: React.FC = () => {
           </PaginationContent>
         </Pagination>
       )}
-    </div>
+    </>
   );
 };
 

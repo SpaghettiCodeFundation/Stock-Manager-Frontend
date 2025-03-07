@@ -7,7 +7,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <AppSidebar />
       <div className="w-full">
-        <div className="flex items-center justify-between px-4 pt-2 absolute">
+        <div className="flex items-center justify-between px-4 pt-2">
           <SidebarTrigger className="bg-transparent hover:bg-transparent"/>
         </div>
         {children}
