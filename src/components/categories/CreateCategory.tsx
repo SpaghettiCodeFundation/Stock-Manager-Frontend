@@ -81,7 +81,7 @@ const CreateCategory: React.FC = () => {
       <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Create Category</AlertDialogTitle>
+            <AlertDialogTitle>Register Category</AlertDialogTitle>
           </AlertDialogHeader>
           <div>
             <Form {...form}>

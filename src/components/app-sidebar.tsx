@@ -50,7 +50,7 @@ const inventories = [
   },
   {
     title: "providers",
-    url: "#",
+    url: "/dashboard/providers",
     icon: Car,
   },
 ];
@@ -71,7 +71,7 @@ const sales = [
   },
   {
     title: "clients",
-    url: "#",
+    url: "/dashboard/clients",
     icon: UserRoundCheck,
   },
 ];

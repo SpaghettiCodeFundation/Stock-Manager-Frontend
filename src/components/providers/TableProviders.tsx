@@ -16,28 +16,28 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  useCategoriesQuery,
-  useDeleteRecordsCategoriesMutation,
-} from "@/hooks/categories.hooks";
+  useProvidersQuery,
+  useDeleteRecordsProvidersMutation,
+} from "@/hooks/providers.hooks";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Checkbox } from "../ui/checkbox";
-import { IQueryCategories } from "@/api/categories.api";
-import ItemTableCategories from "./ItemTableCategories";
-import { ICategory, IMeta } from "@/interfaces/categories.interface";
+import { IQueryProviders } from "@/api/providers.api";
+import ItemTableProviders from "./ItemTableProviders";
+import { IProvider, IMeta } from "@/interfaces/providers.interface";
 import AlertDelete from "../AlertDelete";
 import { AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
-import CreateCategory from "./CreateCategory";
+import CreateProvider from "../providers/CreateProvider";
 
-const TableCategories: React.FC = () => {
-  const [query, setQuery] = useState<IQueryCategories>({});
+const TableProviders: React.FC = () => {
+  const [query, setQuery] = useState<IQueryProviders>({});
   const [deleteAll, setDeleteAll] = useState<boolean>(false);
-  const [recordsCategories, setRecordsCategories] = useState<string[]>([]);
+  const [recordsProviders, setRecordsProviders] = useState<string[]>([]);
 
-  const { data, isLoading } = useCategoriesQuery(query);
-  const { mutate, isPending: isPendingDelete} = useDeleteRecordsCategoriesMutation();
+  const { data, isLoading } = useProvidersQuery(query);
+  const { mutate, isPending: isPendingDelete} = useDeleteRecordsProvidersMutation();
 
-  const handleQuery = (_query: IQueryCategories) => {
+  const handleQuery = (_query: IQueryProviders) => {
     setQuery({
       ...query,
       ..._query,
@@ -48,7 +48,7 @@ const TableCategories: React.FC = () => {
     const { current_page, last_page } = data?.meta as IMeta;
 
     if (current_page !== last_page) {
-      setRecordsCategories([]);
+      setRecordsProviders([]);
       setDeleteAll(false);
       handleQuery({
         page: current_page + 1,
@@ -60,7 +60,7 @@ const TableCategories: React.FC = () => {
     const { current_page } = data?.meta as IMeta;
 
     if (current_page !== 1) {
-      setRecordsCategories([]);
+      setRecordsProviders([]);
       setDeleteAll(false);
       handleQuery({
         page: current_page - 1,
@@ -69,25 +69,25 @@ const TableCategories: React.FC = () => {
   };
 
   const handleSearch = (search: string) => {
-    setRecordsCategories([]);
+    setRecordsProviders([]);
     setDeleteAll(false);
 
     handleQuery({ search });
   };
 
-  const handleDeleteRecordsCategories = () => {
+  const handleDeleteRecordsProviders = () => {
     setDeleteAll(false)
-    setRecordsCategories([])
+    setRecordsProviders([])
 
     handleQuery({
       page: 1,
     });
 
-    mutate(recordsCategories);
+    mutate(recordsProviders);
   };
 
   useEffect(() => {
-    if (!deleteAll) setRecordsCategories([]);
+    if (!deleteAll) setRecordsProviders([]);
   }, [deleteAll]);
 
   return (
@@ -100,20 +100,20 @@ const TableCategories: React.FC = () => {
         />
         <div className="space-x-2 max-lg:mt-4 max-lg:flex max-lg:justify-end">
           <AlertDelete
-            handleAction={handleDeleteRecordsCategories}
-            title="Are you sure you want to delete these categories?"
+            handleAction={handleDeleteRecordsProviders}
+            title="Are you sure you want to delete these providers?"
             description="Remember that all records related to these categories will also be deleted"
           >
             <AlertDialogTrigger asChild>
               <Button
                 variant={"destructive"}
-                disabled={recordsCategories.length === 0}
+                disabled={recordsProviders.length === 0}
               >
                 {isPendingDelete? 'loading ...': 'Delete'}
               </Button>
             </AlertDialogTrigger>
           </AlertDelete>
-          <CreateCategory/>
+          <CreateProvider/>
         </div>
       </div>
 
@@ -131,23 +131,23 @@ const TableCategories: React.FC = () => {
               </label>
             </TableHead>
             <TableHead>name</TableHead>
-            <TableHead>description</TableHead>
+            <TableHead>contact info</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {!isLoading &&
-            data?.categories.map((item: ICategory) => (
-              <ItemTableCategories
+            data?.providers.map((item: IProvider) => (
+              <ItemTableProviders
                 key={item.id}
                 item={item}
                 checkDelete={deleteAll}
-                setRecordsCategories={(id: string) =>
-                  setRecordsCategories((prev) => [...prev, id])
+                setRecordsProviders={(id: string) =>
+                  setRecordsProviders((prev) => [...prev, id])
                 }
-                removeRecordsCategories={(id: string) =>
-                  setRecordsCategories(
-                    recordsCategories.filter((item) => item !== id)
+                removeRecordsProviders={(id: string) =>
+                  setRecordsProviders(
+                    recordsProviders.filter((item) => item !== id)
                   )
                 }
               />
@@ -172,4 +172,4 @@ const TableCategories: React.FC = () => {
   );
 };
 
-export default TableCategories;
+export default TableProviders;

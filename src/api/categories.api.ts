@@ -28,7 +28,6 @@ export const storeCategory = async (data: IFormStoreCategory) => {
 
 
 export const updateCategory = async (data: IFormUpdateCategory, id: string) => {
-
   const response = await api.put(`/categories/${id}`, data).catch(err => {
     console.error(err)
   });
@@ -37,8 +36,6 @@ export const updateCategory = async (data: IFormUpdateCategory, id: string) => {
 };
 
 export const deleteRecordsCategories = async (categories: string[]) => {
-
-  console.log(categories)
   const response = await api.delete('/categories/delete-records', {
     data: {
       categories

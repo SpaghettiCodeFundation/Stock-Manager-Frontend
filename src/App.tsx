@@ -9,6 +9,8 @@ import Login from './pages/login'
 import IsAuthenticateGroup from './components/IsAuthenticateGroup'
 import Home from './pages/Home'
 import Categories from './pages/Categories'
+import Providers from './pages/Providers'
+import Clients from './pages/Clients'
 
 const queryClient = new QueryClient()
 
@@ -20,6 +22,8 @@ export default function App() {
           <Route path="/dashboard" element={<IsAuthenticateGroup/>}>
             <Route index element={<Home/>}></Route>
             <Route path="/dashboard/categories" element={<Categories/>}></Route>
+            <Route path="/dashboard/providers" element={<Providers/>}></Route>
+            <Route path="/dashboard/clients" element={<Clients/>}></Route>
           </Route>
           <Route path="/login" element={<Login/>}></Route>
           <Route path="/" element={<Navigate to="/dashboard"/>}></Route>

@@ -1,4 +1,4 @@
-import TableCategories from "@/components/categories/TableCategories";
+import TableProviders from "@/components/providers/TableProviders";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,9 +11,9 @@ import {
 const Categories: React.FC = () => {
   return (
     <>
-      <div className="bg-yellow-300">
+      <div className="bg-green-400">
         <div className="max-w-7xl pt-11 pb-8 mx-auto px-8 space-y-8">
-          <h1 className="text-3xl">All categories</h1>
+          <h1 className="text-3xl">All providers</h1>
 
           <Breadcrumb>
             <BreadcrumbList>
@@ -22,14 +22,14 @@ const Categories: React.FC = () => {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>Categories</BreadcrumbPage>
+                <BreadcrumbPage>Providers</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </div>
       </div>
       <div className="max-w-7xl mx-auto px-8 mt-11 space-y-8">
-        <TableCategories />
+        <TableProviders />
       </div>
     </>
   );

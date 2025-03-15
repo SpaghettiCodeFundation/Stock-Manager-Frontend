@@ -1,8 +1,10 @@
 
-export interface ICategory {
+export interface IClient {
   id: string;
   name: string;
-  description: string;
+  email: string;
+  phone: string;
+  address: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -13,7 +15,7 @@ export interface IMeta {
   last_page: number;
 }
 
-export interface IApiResponseCategories {
-  categories: ICategory[];
+export interface IApiResponseClients {
+  clients: IClient[];
   meta: IMeta;
 }
