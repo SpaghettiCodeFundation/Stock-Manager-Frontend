@@ -21,79 +21,67 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-import { ICategory } from "@/interfaces/categories.interface";
-
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Pencil } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { z } from "zod";
+import {storeProvider} from "@/api/providers.api";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {updateCategory} from "@/api/categories.api";
 
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
   }),
-  description: z.string().min(2, {
-    message: "Description must be at least 2 characters.",
+  contactInfo: z.string().min(2, {
+    message: "Contact info must be at least 2 characters.",
   }),
 });
 
-export type IFormUpdateCategory = z.infer<typeof formSchema>;
+export type IFormStoreProvider = z.infer<typeof formSchema>;
 
-interface IProps {
-  item: ICategory;
-}
-
-const EditCategory: React.FC<IProps> = ({ item }) => {
+const CreateProvider: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
 
-  const form = useForm<IFormUpdateCategory>({
+  const form = useForm<IFormStoreProvider>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: item.name,
-      description: item.description,
+      name: '',
+      contactInfo: '',
     },
   });
 
   const queryClient = useQueryClient();
-
-  interface IParams {
-    data: IFormUpdateCategory,
-    id: string
-  }
-
+  
   const {mutate, isPending} = useMutation({
-    mutationFn: async ({data, id}: IParams) => await updateCategory(data, id),
-    mutationKey: ["categories"],
+    mutationFn: async (data: IFormStoreProvider) => await storeProvider(data),
+    mutationKey: ["providers"],
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: ["providers"] });
       onClose()
     },
+    onError: (err) => {
+      console.log(err)
+    }
   });
 
-  function onSubmit(values: IFormUpdateCategory) {
-    mutate({
-      id: item.id as string,
-      data: values
-    })
+  function onSubmit(values: IFormStoreProvider) {
+    mutate(values)
   }
 
   return (
     <>
-      <Button variant={"outline"} className="border-none" onClick={onOpen}>
-        <Pencil />
+      <Button className="border-none" onClick={onOpen}>
+        Create new provider 
       </Button>
 
       <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Edit Category</AlertDialogTitle>
+            <AlertDialogTitle>Register Provider</AlertDialogTitle>
           </AlertDialogHeader>
           <div>
             <Form {...form}>
@@ -117,10 +105,10 @@ const EditCategory: React.FC<IProps> = ({ item }) => {
 
                 <FormField
                   control={form.control}
-                  name="description"
+                  name="contactInfo"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Description</FormLabel>
+                      <FormLabel>Contact Info</FormLabel>
                       <FormControl>
                         <Textarea style={{height: 200}} {...field} />
                       </FormControl>
@@ -129,7 +117,7 @@ const EditCategory: React.FC<IProps> = ({ item }) => {
                   )}
                 />
                 <Button type="submit">
-                  { isPending ? "Updating..." : "Edit" }
+                  { isPending ? "Creating..." : "Create" }
                 </Button>
               </form>
             </Form>
@@ -143,4 +131,4 @@ const EditCategory: React.FC<IProps> = ({ item }) => {
   );
 };
 
-export default EditCategory;
+export default CreateProvider;

@@ -21,79 +21,73 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-import { ICategory } from "@/interfaces/categories.interface";
-
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Pencil } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { z } from "zod";
+import {storeClient} from "@/api/clients.api";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {updateCategory} from "@/api/categories.api";
 
 const formSchema = z.object({
-  name: z.string().min(2, {
+    name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
   }),
-  description: z.string().min(2, {
-    message: "Description must be at least 2 characters.",
+  email: z.string().email(),
+  phone: z.string().min(2, {
+    message: "Phone must be at least 2 characters.",
+  }),
+  address: z.string().min(2, {
+    message: "Address must be at least 2 characters.",
   }),
 });
 
-export type IFormUpdateCategory = z.infer<typeof formSchema>;
+export type IFormStoreClient = z.infer<typeof formSchema>;
 
-interface IProps {
-  item: ICategory;
-}
-
-const EditCategory: React.FC<IProps> = ({ item }) => {
+const CreateClient: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
 
-  const form = useForm<IFormUpdateCategory>({
+  const form = useForm<IFormStoreClient>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: item.name,
-      description: item.description,
+      name: '',
+      email: '',
+      phone: '',
+      address: '',
     },
   });
 
   const queryClient = useQueryClient();
-
-  interface IParams {
-    data: IFormUpdateCategory,
-    id: string
-  }
-
+  
   const {mutate, isPending} = useMutation({
-    mutationFn: async ({data, id}: IParams) => await updateCategory(data, id),
+    mutationFn: async (data: IFormStoreClient) => await storeClient(data),
     mutationKey: ["categories"],
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories"] });
       onClose()
     },
+    onError: (err) => {
+      console.log(err)
+    }
   });
 
-  function onSubmit(values: IFormUpdateCategory) {
-    mutate({
-      id: item.id as string,
-      data: values
-    })
+  function onSubmit(values: IFormStoreClient) {
+    mutate(values)
   }
 
   return (
     <>
-      <Button variant={"outline"} className="border-none" onClick={onOpen}>
-        <Pencil />
+      <Button className="border-none" onClick={onOpen}>
+        Create new clients 
       </Button>
 
       <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Edit Category</AlertDialogTitle>
+            <AlertDialogTitle>Register Client</AlertDialogTitle>
           </AlertDialogHeader>
           <div>
             <Form {...form}>
@@ -108,7 +102,7 @@ const EditCategory: React.FC<IProps> = ({ item }) => {
                     <FormItem>
                       <FormLabel>Name</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input type="text" {...field} required {...field}/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -117,19 +111,49 @@ const EditCategory: React.FC<IProps> = ({ item }) => {
 
                 <FormField
                   control={form.control}
-                  name="description"
+                  name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Description</FormLabel>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Textarea style={{height: 200}} {...field} />
+                        <Input type="email" required {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone</FormLabel>
+                      <FormControl>
+                        <Input type="text" required {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Address</FormLabel>
+                      <FormControl>
+                        <Textarea style={{height: '200px'}} required {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+
                 <Button type="submit">
-                  { isPending ? "Updating..." : "Edit" }
+                  { isPending ? "Creating..." : "Create" }
                 </Button>
               </form>
             </Form>
@@ -143,4 +167,4 @@ const EditCategory: React.FC<IProps> = ({ item }) => {
   );
 };
 
-export default EditCategory;
+export default CreateClient;

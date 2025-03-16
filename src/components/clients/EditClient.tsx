@@ -21,8 +21,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-import { ICategory } from "@/interfaces/categories.interface";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Pencil } from "lucide-react";
 import { useState } from "react";
@@ -30,54 +28,74 @@ import { useForm } from "react-hook-form";
 
 import { z } from "zod";
 import {useMutation, useQueryClient} from "@tanstack/react-query";
-import {updateCategory} from "@/api/categories.api";
+import {IClient} from "@/interfaces/clients.interface";
+import {updateClient} from "@/api/clients.api";
+import {AxiosError} from "axios";
+import {IFormError} from "@/interfaces/errors.interface";
 
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
   }),
-  description: z.string().min(2, {
-    message: "Description must be at least 2 characters.",
-  }),
+  email: z.string().email(),
+  phone: z.optional(z.string().min(2, {
+    message: "Phone must be at least 2 characters.",
+  })),
+  address: z.optional(z.string().min(2, {
+    message: "Address must be at least 2 characters.",
+  })),
 });
 
-export type IFormUpdateCategory = z.infer<typeof formSchema>;
+export type IFormUpdateClient = z.infer<typeof formSchema>;
 
 interface IProps {
-  item: ICategory;
+  item: IClient;
 }
 
-const EditCategory: React.FC<IProps> = ({ item }) => {
+const EditClient: React.FC<IProps> = ({ item }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const onOpen = () => setIsOpen(true);
   const onClose = () => setIsOpen(false);
 
-  const form = useForm<IFormUpdateCategory>({
+  const form = useForm<IFormUpdateClient>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: item.name,
-      description: item.description,
+      email: item.email,
+      phone: item.phone,
+      address: item.address,
     },
   });
+
+  const {setError} = form
 
   const queryClient = useQueryClient();
 
   interface IParams {
-    data: IFormUpdateCategory,
+    data: IFormUpdateClient,
     id: string
   }
 
   const {mutate, isPending} = useMutation({
-    mutationFn: async ({data, id}: IParams) => await updateCategory(data, id),
-    mutationKey: ["categories"],
+    mutationFn: async ({data, id}: IParams) => await updateClient(data, id),
+    mutationKey: ["clients"],
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: ["clients"] });
       onClose()
+    }, onError: (err) => {
+      if(err instanceof AxiosError) {
+        const errors = (err.response?.data.errors)
+        errors.forEach((error: IFormError) => {
+          setError(error.path as "name" | "email" | "phone" | "address", {
+            message: error.msg
+          })
+        })
+      }
     },
   });
 
-  function onSubmit(values: IFormUpdateCategory) {
+  function onSubmit(values: IFormUpdateClient) {
     mutate({
       id: item.id as string,
       data: values
@@ -93,7 +111,7 @@ const EditCategory: React.FC<IProps> = ({ item }) => {
       <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Edit Category</AlertDialogTitle>
+            <AlertDialogTitle>Edit Client</AlertDialogTitle>
           </AlertDialogHeader>
           <div>
             <Form {...form}>
@@ -108,7 +126,7 @@ const EditCategory: React.FC<IProps> = ({ item }) => {
                     <FormItem>
                       <FormLabel>Name</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input type="text" {...field} {...field}/>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -117,17 +135,46 @@ const EditCategory: React.FC<IProps> = ({ item }) => {
 
                 <FormField
                   control={form.control}
-                  name="description"
+                  name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Description</FormLabel>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Textarea style={{height: 200}} {...field} />
+                        <Input type="email" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone</FormLabel>
+                      <FormControl>
+                        <Input type="text" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Address</FormLabel>
+                      <FormControl>
+                        <Textarea style={{height: '200px'}} {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <Button type="submit">
                   { isPending ? "Updating..." : "Edit" }
                 </Button>
@@ -143,4 +190,4 @@ const EditCategory: React.FC<IProps> = ({ item }) => {
   );
 };
 
-export default EditCategory;
+export default EditClient;

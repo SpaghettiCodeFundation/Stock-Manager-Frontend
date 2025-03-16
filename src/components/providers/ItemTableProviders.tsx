@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { TableCell, TableRow } from "../ui/table";
 import { Checkbox } from "../ui/checkbox";
-import { ICategory } from "@/interfaces/categories.interface";
-import EditCategory from "./EditCategory";
+import {IProvider} from "@/interfaces/providers.interface";
 
 interface IProps {
-  item: ICategory;
+  item: IProvider;
   checkDelete: boolean;
-  setRecordsCategories: (id: string) => void;
-  removeRecordsCategories: (id: string) => void;
+  setRecordsProviders: (id: string) => void;
+  removeRecordsProviders: (id: string) => void;
 }
 
-const ItemTableCategories: React.FC<IProps> = ({
+const ItemTableProviders: React.FC<IProps> = ({
   item,
   checkDelete,
-  setRecordsCategories,
-  removeRecordsCategories,
+  setRecordsProviders,
+  removeRecordsProviders,
 }) => {
   const [isDeleted, setIsDeleted] = useState(false);
 
@@ -24,8 +23,8 @@ const ItemTableCategories: React.FC<IProps> = ({
   }, [checkDelete]);
 
   useEffect(() => {
-    if (isDeleted) setRecordsCategories(item.id as string);
-    if (!isDeleted) removeRecordsCategories(item.id as string);
+    if (isDeleted) setRecordsProviders(item.id as string);
+    if (!isDeleted) removeRecordsProviders(item.id as string);
   }, [isDeleted]);
 
   return (
@@ -37,12 +36,12 @@ const ItemTableCategories: React.FC<IProps> = ({
         />
       </TableCell>
       <TableCell>{item.name}</TableCell>
-      <TableCell>{item.description}</TableCell>
+      <TableCell>{item.contactInfo}</TableCell>
       <TableCell className="text-right">
-        <EditCategory item={item}/>
+        edit
       </TableCell>
     </TableRow>
   );
 };
 
-export default ItemTableCategories;
+export default ItemTableProviders;
